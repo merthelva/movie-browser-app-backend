@@ -24,11 +24,11 @@ router.post(
     body("password")
       .trim()
       .isLength({ min: 8 })
-      .withMessage("Entered password is invalid"),
+      .withMessage("Password must be at least 8 characters."),
     body("confirmPassword")
       .trim()
       .isLength({ min: 8 })
-      .withMessage("Entered password confirm is invalid"),
+      .withMessage("Confirmed password must be at least 8 characters"),
   ],
   authController.signup
 );
@@ -38,12 +38,12 @@ router.post(
   [
     body("email")
       .isEmail()
-      .withMessage("Please enter a valid email")
+      .withMessage("Please enter a valid email.")
       .normalizeEmail(),
     body("password")
       .trim()
       .isLength({ min: 8 })
-      .withMessage("Entered password is invalid"),
+      .withMessage("Password must be at least 8 characters."),
   ],
   authController.login
 );
