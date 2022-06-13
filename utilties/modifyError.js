@@ -1,8 +1,12 @@
 module.exports = (error = []) => {
-  return error.map((e) => ({
-    [e.param]: {
-      message: e.msg,
-      value: e.value,
-    },
-  }));
+  return error.reduce((acc, cur) => {
+    acc = {
+      ...acc,
+      [cur.param]: {
+        message: cur.msg,
+        value: cur.value,
+      },
+    };
+    return acc;
+  }, {});
 };

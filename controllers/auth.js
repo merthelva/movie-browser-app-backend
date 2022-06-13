@@ -7,6 +7,7 @@ const modifyError = require("../utilties/modifyError");
 
 exports.signup = async (req, res, next) => {
   const { errors } = validationResult(req);
+  const modifiedErrors = {};
 
   // error object possibly contains the errors which will be thrown
   // when validation check(s) inside ../routes/auth.js file fail(s)
@@ -28,15 +29,15 @@ exports.signup = async (req, res, next) => {
   const { email, password, confirmPassword } = req.body;
   try {
     if (password !== confirmPassword) {
+      modifiedErrors.confirmPassword = {
+        message: "Entered paswords do not match",
+        value: confirmPassword,
+      };
+
       res.status(401).json({
-        reason: [
-          {
-            confirmPassword: {
-              message: "Entered paswords do not match",
-              value: confirmPassword,
-            },
-          },
-        ],
+        reason: {
+          ...modifiedErrors,
+        },
       });
       return;
     }
@@ -60,6 +61,7 @@ exports.signup = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
   const { errors } = validationResult(req);
+  const modifiedErrors = {};
 
   // error object possibly contains the errors which will be thrown
   // when validation check(s) inside ../routes/auth.js file fail(s)
@@ -78,33 +80,30 @@ exports.login = async (req, res, next) => {
   }
 
   const { email, password } = req.body;
+  let isPasswordCorrect = false;
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      res.status(401).json({
-        reason: [
-          {
-            email: {
-              message: "A user with this email could not be found",
-              value: email,
-            },
-          },
-        ],
-      });
-      return;
+      modifiedErrors.email = {
+        message: "A user with this email could not be found",
+        value: email,
+      };
+    } else {
+      isPasswordCorrect = await bcrypt.compare(password, user.password);
     }
 
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
+      modifiedErrors.password = {
+        message: "Entered password is incorrect",
+        value: password,
+      };
+    }
+
+    if (Object.keys(modifiedErrors).length) {
       res.status(401).json({
-        reason: [
-          {
-            password: {
-              message: "Entered password is incorrect",
-              value: password,
-            },
-          },
-        ],
+        reason: {
+          ...modifiedErrors,
+        },
       });
       return;
     }
