@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 const setHeaders = require("./middleware/setHeaders");
-const error = require("./middleware/error");
+const errorMiddleware = require("./middleware/error");
 
 const authRoutes = require("./routes/auth");
 const watchlistRoutes = require("./routes/watchlist");
@@ -18,7 +18,7 @@ app.use(setHeaders);
 app.use("/auth", authRoutes);
 app.use("/watchlist", watchlistRoutes);
 
-app.use(error);
+app.use(errorMiddleware);
 
 mongoose
   .connect(
