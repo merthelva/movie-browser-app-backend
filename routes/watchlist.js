@@ -1,7 +1,5 @@
 const express = require("express");
-const { body } = require("express-validator");
 
-const Movie = require("../models/movie");
 const watchlistController = require("../controllers/watchlist");
 
 const router = express.Router();
