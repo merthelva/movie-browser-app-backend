@@ -113,7 +113,7 @@ exports.login = async (req, res, next) => {
         email: user.email,
         userId: user._id.toString(),
       },
-      "somesupersuperlongsecret",
+      process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
